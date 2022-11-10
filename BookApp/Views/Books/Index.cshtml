@@ -1,4 +1,5 @@
-﻿@model IEnumerable<BookApp.Data.Book>
+﻿@inject ILogger<BookApp.Controllers.BooksController> logger
+@model IEnumerable<BookApp.Data.Book>
 
 @{
     ViewData["Title"] = "Index";
@@ -41,7 +42,9 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            logger.LogDebug($"item={item}");
+
+            <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>

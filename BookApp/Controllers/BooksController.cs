@@ -12,21 +12,28 @@ namespace BookApp.Controllers
     public class BooksController : Controller
     {
         private readonly BookDataDbContext _context;
+        private readonly ILogger<BooksController> _logger;
 
-        public BooksController(BookDataDbContext context)
+        public BooksController(BookDataDbContext context, ILogger<BooksController> logger)
         {
             _context = context;
+            _logger = logger;
+            _logger.LogDebug("BooksController()");
         }
 
         // GET: Books
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Books.ToListAsync());
+            _logger.LogDebug("Index()");
+
+            return View(await _context.Books.ToListAsync());
         }
 
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            _logger.LogDebug($"Details(id={id})");
+
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -45,6 +52,8 @@ namespace BookApp.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
+            _logger.LogDebug($"Create()");
+
             return View();
         }
 
@@ -55,6 +64,8 @@ namespace BookApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Author,NumberOfPages,Publisher,Price,ISBN,Category,Created")] Book book)
         {
+            _logger.LogDebug($"Create(book={book})");
+
             if (ModelState.IsValid)
             {
                 _context.Add(book);
@@ -67,6 +78,8 @@ namespace BookApp.Controllers
         // GET: Books/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            _logger.LogDebug($"Edit(id={id})");
+
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -87,6 +100,8 @@ namespace BookApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Author,NumberOfPages,Publisher,Price,ISBN,Category,Created")] Book book)
         {
+            _logger.LogDebug($"Edit(id={id}, book={book})");
+
             if (id != book.Id)
             {
                 return NotFound();
@@ -118,6 +133,8 @@ namespace BookApp.Controllers
         // GET: Books/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            _logger.LogDebug($"Delete(id={id})");
+
             if (id == null || _context.Books == null)
             {
                 return NotFound();
@@ -138,6 +155,8 @@ namespace BookApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            _logger.LogDebug($"DeleteConfirmed(id={id})");
+
             if (_context.Books == null)
             {
                 return Problem("Entity set 'BookDataDbContext.Books'  is null.");
@@ -154,7 +173,8 @@ namespace BookApp.Controllers
 
         private bool BookExists(int id)
         {
-          return _context.Books.Any(e => e.Id == id);
+            _logger.LogDebug($"BookExists(id={id})");
+            return _context.Books.Any(e => e.Id == id);
         }
     }
 }
