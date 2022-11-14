@@ -23,7 +23,7 @@ namespace BookApp.Controllers
 
         public IActionResult Privacy()
         {
-            throw new Exception("Det er jo helt forkert");
+            // throw new Exception("Det er jo helt forkert");
 
             return View();
         }
