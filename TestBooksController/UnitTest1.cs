@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
 
 namespace TestBooksController
 {
@@ -15,7 +16,7 @@ namespace TestBooksController
         }
 
         [Test]
-        public void IndexTest()
+        public void IndexTest([Values(1, 2, 3)] int x)
         {
             var options = new DbContextOptionsBuilder<BookDataDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDb")
@@ -27,7 +28,7 @@ namespace TestBooksController
 
             var bookA = new Book()
             {
-                Title = "Title Number 1",
+                Title = $"Title Number {x}",
                 Author = "Author Number 1",
                 NumberOfPages = 117,
                 Publisher = "Publisher Number 1",
@@ -39,12 +40,16 @@ namespace TestBooksController
 
             var result = booksController.Create(bookA);
 
+            Debug.WriteLine(bookA.Id);
+
             result.Should().BeOfType<Task<IActionResult>>();
 
-            var bookB = context.Books.First();
+            var bookB = context.Books.Where(i => i.Id == bookA.Id).FirstOrDefault();
 
-            Assert.That(bookB.Id, Is.EqualTo(1));
-            Assert.That(bookB.Title, Is.EqualTo("Title Number 1"));
+            bookB.Should().BeOfType<Book>();
+
+            Assert.That(bookB.Id, Is.EqualTo(bookA.Id));
+            Assert.That(bookB.Title, Is.EqualTo($"Title Number {x}"));
             Assert.That(bookB.Author, Is.EqualTo("Author Number 1"));
             Assert.That(bookB.NumberOfPages, Is.EqualTo(117));
             Assert.That(bookB.Publisher, Is.EqualTo("Publisher Number 1"));
